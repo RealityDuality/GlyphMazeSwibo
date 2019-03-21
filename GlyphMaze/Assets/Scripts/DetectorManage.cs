@@ -34,20 +34,26 @@ public class DetectorManage : MonoBehaviour
     public int recognized;
     public int fizzles;
 
-  
+    [SerializeField]
+    private int DownUsed;
 
     public Transform referenceRoot;
  
     GesturePatternDraw[] references;
 
     public string lastspell;
-   public List<string> SpellsCast;
+
+    public List<string> SpellsCast;
+
+    public GestureRecognizer.UILineRenderer spellLine;
 
     // Start is called before the first frame update
     void Start()
     {
         GetDraw = this.gameObject.GetComponent<ModifiedDetector>();
         references = referenceRoot.GetComponentsInChildren<GesturePatternDraw>();
+       // spellLine = this.gameObject.GetComponentsInChildren<UILineRenderer>();
+
     }
 
     // Update is called once per frame
@@ -84,29 +90,41 @@ public class DetectorManage : MonoBehaviour
 
     public void OnRecognize(RecognitionResult result)
     {
-        List<string> SpellsCast = new List<string>();
+        //List<string> SpellsCast = new List<string>();
 
         StopAllCoroutines();
-        if(result != RecognitionResult.Empty)
+        if (result != RecognitionResult.Empty)
         { //result is the ID for the recog
             CastSpell(result.gesture.id);
-            SpellsCast.Add(result.gesture.id);
-            lastspell = result.gesture.id;
 
+            if (lastspell != null)
+            { 
+                lastspell = result.gesture.id;
+            }
+            
         }
 
     }
 
     public void CastSpell(string id)
     {
+        //If this gets too large, it can be put into seperate Spell Library script
         var draw = references.Where(e => e.pattern.id == id).FirstOrDefault();
+
+
+        if (id == "vertical")
+        {
+            DownUsed++;
+        }
+
+        if(lastspell != string.Empty) { 
+            SpellsCast.Add(lastspell);
+        }
+
         recognized++;
         GetDraw.ClearLines();
 
-        if (id == "PatternDown")
-        {
-
-        }
+        
 
     }
 

@@ -45,14 +45,18 @@ namespace GestureRecognizer {
 
 		RectTransform rectTransform;
 
+        [SerializeField]
+        private DetectorManage GetManager;
 
-		void Start(){
+
+        void Start(){
 			line.relativeSize = true;
 			line.LineList = false;
 			lines = new List<UILineRenderer> (){ line };
 			rectTransform = transform as RectTransform;
 			UpdateLines ();
-		}
+            GetManager = this.gameObject.GetComponent<DetectorManage>();
+        }
 
 		void OnValidate(){
 			maxLines = Mathf.Max (minLines, maxLines);
@@ -171,12 +175,18 @@ namespace GestureRecognizer {
 					if (clearNotRecognizedLines) {
 						data = sizedData;
 						UpdateLines ();
+                      //  ClearLines();
+                        //Clearlines added.
 					}
 					break;
 				} else {
 					OnRecognize.Invoke (RecognitionResult.Empty);
-				}
-			}
+                    GetManager.fizzles++;
+                    GetManager.SpellsCast.Add("Spell Failure");
+                    //ClearLines();
+                    //Clearlines added.
+                }
+            }
 
 			yield return null;
 		}
